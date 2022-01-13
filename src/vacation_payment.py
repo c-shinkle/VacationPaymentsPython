@@ -1,5 +1,4 @@
 from dataclasses import dataclass
-from enum import Enum
 from decimal import Decimal, ROUND_HALF_UP
 from re import sub
 
