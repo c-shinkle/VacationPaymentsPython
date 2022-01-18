@@ -9,16 +9,17 @@ class Test(TestCase):
 
     @patch('builtins.input', side_effect=['Alex $8,000.00', 'Justin $2,000.00', '#'])
     def test_given_amount_with_dollar_sign_and_period_as_input_should_parse_correctly(self, mock_input):
+        expected = [Person('Alex', Decimal(8000)), Person('Justin', Decimal(2000))]
         actual = handle_input()
 
-        self.assertListEqual([Person('Alex', Decimal(8000)), Person('Justin', Decimal(2000))], actual)
+        self.assertListEqual(actual, expected)
 
-    @patch('builtins.print')
-    def test_given_people_caleb_should_print_amounts_owed(self, mock_print):
-        calebs_algorithm([Person('Alex', Decimal(6)), Person('Justin', Decimal(2)), Person('Caleb', Decimal(1))])
+    def test_given_people_caleb_should_print_amounts_owed(self):
+        expected = [Person('Alex', Decimal('0.00')), Person('Justin', Decimal('1.00')), Person('Caleb', Decimal('2.00'))]
 
-        calls = [call('Alex owes nothing'), call('Justin owes $1.00'), call('Caleb owes $2.00')]
-        mock_print.assert_has_calls(calls)
+        actual = calebs_algorithm([Person('Alex', Decimal(6)), Person('Justin', Decimal(2)), Person('Caleb', Decimal(1))])
+
+        self.assertListEqual(expected, actual)
 
     @patch('builtins.print')
     def test_given_people_zach_should_print_amounts_owed(self, mock_print):
@@ -27,12 +28,11 @@ class Test(TestCase):
         calls = [call('Alex owes nothing'), call('Justin owes $1.00'), call('Caleb owes $2.00')]
         mock_print.assert_has_calls(calls)
 
-    @patch('builtins.print')
-    def test_given_amount_with_decimals_as_input_should_round_amounts_owed(self, mock_print):
-        calebs_algorithm([Person('Alex', Decimal('1.33')), Person('Justin', Decimal('0'))])
+    def test_given_amount_with_decimals_as_input_should_round_amounts_owed(self):
+        expected = [Person('Alex', Decimal('0.00')), Person('Justin', Decimal('0.67'))]
+        actual = calebs_algorithm([Person('Alex', Decimal('1.33')), Person('Justin', Decimal('0'))])
 
-        calls = [call('Alex owes nothing'), call('Justin owes $0.67')]
-        mock_print.assert_has_calls(calls)
+        self.assertListEqual(actual, expected)
 
     @patch('builtins.input',
            side_effect=['Alex $3,136.02', 'Justin $290.64', 'Christian $680.95', 'Zach $159.71', 'Caleb $363.14', '#'])

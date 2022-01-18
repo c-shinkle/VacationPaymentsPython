@@ -13,7 +13,9 @@ TWOPLACES = Decimal(10) ** -2
 
 
 def cli_caleb():
-    calebs_algorithm(handle_input())
+    people = calebs_algorithm(handle_input())
+    for p in people:
+        print("{} owes {}".format(p.name, "$" + str(p.amount) if p.amount > 0 else 'nothing'))
 
 
 def cli_zach():
@@ -32,11 +34,12 @@ def handle_input() -> [Person]:
     return people
 
 
-def calebs_algorithm(people: [Person]):
+def calebs_algorithm(people: [Person]) -> [Person]:
     per_person = sum(p.amount for p in people) / len(people)
-    for p in people:
-        amount = (per_person - p.amount).quantize(TWOPLACES, ROUND_HALF_UP)
-        print("{} owes {}".format(p.name, "$" + str(amount) if amount > 0 else 'nothing'))
+    return [
+        Person(p.name, max((per_person - p.amount).quantize(TWOPLACES, ROUND_HALF_UP), Decimal('0.00')))
+        for p in people
+    ]
 
 
 def zachs_algorithm(people: [Person]):
@@ -50,8 +53,7 @@ def zachs_algorithm(people: [Person]):
     pay_dict: dict[tuple[str, str], Decimal] = {}
     for earner in people:
         for payee in people:
-            amount = (debt_dict[earner.name, payee.name] - debt_dict[payee.name, earner.name]) \
-                .quantize(TWOPLACES, ROUND_HALF_UP)
+            amount = debt_dict[earner.name, payee.name] - debt_dict[payee.name, earner.name]
             pay_dict[(earner.name, payee.name)] = max(amount, Decimal(0))
     for person in people:
         total_to_pay = Decimal(0)
@@ -60,5 +62,5 @@ def zachs_algorithm(people: [Person]):
         total_to_receive = Decimal(0)
         for earner in people:
             total_to_receive += pay_dict[(person.name, earner.name)]
-        amount = total_to_pay - total_to_receive
+        amount = (total_to_pay - total_to_receive).quantize(TWOPLACES, ROUND_HALF_UP)
         print("{} owes {}".format(person.name, "$" + str(amount) if amount > Decimal(0) else 'nothing'))
