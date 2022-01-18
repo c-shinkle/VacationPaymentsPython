@@ -9,7 +9,7 @@ from marshmallow import Schema, fields, ValidationError
 from src.vacation_payment import Person, calebs_algorithm
 
 app = Flask(__name__)
-CORS(app)
+CORS(app, resources={r"/payments": {"origins": "*"}})
 api = Api(app)
 
 
@@ -39,4 +39,4 @@ class Payments(Resource):
 api.add_resource(Payments, '/payments')
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(debug=True, host='0.0.0.0')
